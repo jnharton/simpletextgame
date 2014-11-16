@@ -81,6 +81,7 @@ while play:
         else:
             print 'the dragon ignores your words and eats you in one gulp.\n'\
                   'You slowly die in it\'s digestive tract over the next few days'
+    print
     play=raw_input('do you wish to play again? ').lower()
     if play=='y' or play=='yes' or play=='':
         play=True
