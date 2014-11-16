@@ -3,7 +3,7 @@ import random
 play=True
 while play:
     go_on=True
-    print "What class would you like to be? We currently support:"
+    print "\nWhat class would you like to be? We currently support:"
     print "Sorcerer (Stats:15 Int, 7 Str, 8 Char, 12 Wis, 9 Dex, 9 Vit) \n",\
           "Warrior (Stats:6 Int, 14 Str, 11 Char, 7 Wis, 10 Dex, 13 Vit) \n",\
           "Rogue (Stats:8 Int, 8 Str, 12 Char, 10 Wis, 13 Dex, 9 Vit)"
@@ -51,6 +51,9 @@ while play:
                 "that you did not do anything foolish. You also notice a back door"
             print
             entry=raw_input("Do you run for the door or stay where you are? ")
+            if entry=='stay':
+                "the eyes form into soldiers who come out and murder you"
+                go_on=False
         else:
             print 'you awkwardly stand around for 30 minutes until a man walks in.'
             print 'he slowly walks over to you and proceeds to slit your throat.\n'\
