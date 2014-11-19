@@ -32,7 +32,7 @@ while play:
 
     # begin your adventure
     if go_on:
-        doors = random.randint(1,4)
+        doors = random.randint(1, 4)
 
         print('You are in a room with %s doors' %(doors))
         print('')
@@ -89,6 +89,7 @@ while play:
                 'While you attempt to open the door, you feel an instant of searing\n'\
                 'pain as you are burned to a crisp.'
                 go_on = False
+
     if go_on:
         print('You are greeted with a large red dragon. It seems a bit peeved.')
         print('')
@@ -101,11 +102,13 @@ while play:
             print('The dragon ignores your words and eats you in one gulp.\n'
                   'You slowly die in it\'s digestive tract over the next few days')
 
+        go_on = False
+
     print('')
 
-    play = input('Do you wish to play again? ').lower()
+    play = False
 
-    if play == 'y' or play == 'yes' or play == '':
+    keep_playing = input('Do you wish to play again? ').lower()
+
+    if keep_playing == 'y' or keep_playing == 'yes' or keep_playing == '':
         play = True
-    else:
-        break
