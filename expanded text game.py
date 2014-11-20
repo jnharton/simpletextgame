@@ -13,10 +13,15 @@ valid_actions = {
 }
 
 default_stats = {
-    'rogue':    {'str': 8,  'dex': 13, 'vit': 9,  'int': 8,  'char': 12, 'wis': 10},
-    'sorcerer': {'str': 7,  'dex': 9,  'vit': 9,  'int': 15, 'char': 8,  'wis': 12},
-    'warrior':  {'str': 14, 'dex': 10, 'vit': 13, 'int': 6,  'char': 11, 'wis': 7},
+    'rogue':    {'str': 8,  'dex': 13, 'vit': 9,  'int': 8,  'cha': 12, 'wis': 10},
+    'sorcerer': {'str': 7,  'dex': 9,  'vit': 9,  'int': 15, 'cha': 8,  'wis': 12},
+    'warrior':  {'str': 14, 'dex': 10, 'vit': 13, 'int': 6,  'cha': 11, 'wis': 7},
 }
+
+items = ['golden chalice', 'ruby studded crown', 'gleaming shield', 'gilt handled dagger']
+
+gauntlet_taken = False
+guards_alerted = False
 
 play = True
 
@@ -24,9 +29,9 @@ while play:
     go_on = True
 
     print('\nWhat class would you like to be? We currently support:')
-    print('Sorcerer (Stats: 15 Int,  7 Str,  8 Char, 12 Wis,  9 Dex,  9 Vit) \n'
-          'Warrior  (Stats:  6 Int, 14 Str, 11 Char,  7 Wis, 10 Dex, 13 Vit) \n'
-          'Rogue    (Stats:  8 Int,  8 Str, 12 Char, 10 Wis, 13 Dex,  9 Vit)')
+    print('Sorcerer (Stats: 15 Int,  7 Str,  8 Cha, 12 Wis,  9 Dex,  9 Vit) \n'
+          'Warrior  (Stats:  6 Int, 14 Str, 11 Cha,  7 Wis, 10 Dex, 13 Vit) \n'
+          'Rogue    (Stats:  8 Int,  8 Str, 12 Cha, 10 Wis, 13 Dex,  9 Vit)')
     print("")
 
     inventory = []
@@ -35,6 +40,14 @@ while play:
     # set stats
     #stats = default_stats[rpg_class]
     stats = default_stats.get(rpg_class)
+
+    # 'randomize'
+    stats['str'] = random.randint(stats['str'] - 2, stats['str'] + 2)
+    stats['dex'] = random.randint(stats['dex'] - 2, stats['dex'] + 2)
+    stats['vit'] = random.randint(stats['vit'] - 2, stats['vit'] + 2)
+    stats['int'] = random.randint(stats['int'] - 2, stats['int'] + 2)
+    stats['cha'] = random.randint(stats['cha'] - 2, stats['cha'] + 2)
+    stats['wis'] = random.randint(stats['wis'] - 2, stats['wis'] + 2)
 
     # sets starting gear
     if rpg_class == 'sorcerer':
@@ -51,6 +64,7 @@ while play:
 
     # begin your adventure
     if go_on:
+        #stage = 1
         doors = random.randint(1, 4)
 
         print('You are in a room with %s doors' %(doors))
@@ -68,19 +82,66 @@ while play:
             print('')
         
         entry = input('What do you do? ')
-        
+
         if entry == 'steal':
-            if rpg_class == 'rogue' and random.randint(1, 2) == 1:
-                inventory.append('gauntlet')
-                entry = input("What next? ")
+            #if rpg_class == 'rogue' and random.randint(1, 2) == 1:
+            if rpg_class == 'rogue' and guards_alerted is False:
+                    print('entry: ' + '\'' + str(entry) + '\'')
+
+                    inv_size = len(inventory)
+                    max_inv = len(inventory) + len(items)
+
+                    while entry == 'steal':
+                        test = random.randint(12, 14)
+                        #test = 12
+
+                        print('test: ' + str(test))
+                        print('dex:  ' + str(stats['dex']))
+
+                        if stats['dex'] >= test:
+                            if gauntlet_taken is False:
+                                inventory.append('gauntlet')
+                                print('You take the gauntlet.')
+                                gauntlet_taken = True
+                            else:
+                                if len(items) > 0:
+                                    if len(inventory) < max_inv:
+                                        item = random.randint(0, len(items) - 1)
+                                        inventory.append(items.pop(item))
+                                        print('You help yourself to another piece of treasure')
+                                    else:
+                                        dropped = items.append(inventory.pop())
+                                        print('In your greed, you drop something.')
+
+                                        treasure = ['golden chalice', 'ruby studded crown', 'gleaming shield', 'gilt handled dagger']
+
+                                        if dropped in treasure:
+                                            print(str(dropped) + ' clatters noisily to the ground...')
+                                            guard_alerted = True
+                                        else:
+                                            print('Phew, that was close. At least that didn\'t make much noise.')
+                                else:
+                                    print('That\'s quite a haul. You figure you can make it out safely if you '
+                                          'don\'t take anything else.')
+                        elif stats['dex'] < test:
+                            guards_alerted = True
+
+                        entry = input("What next? ")
+
+                    if guards_alerted is True:
+                        print('A voice in the distance cries: \'Thief!\'')
+                        print('Guards rush out of nowhere to surround you, \n'
+                              'then they summarily execute you (by beheading of course), \n'
+                              'but not before the chop off each of your hands and feet')
+                        go_on = False
             else:
                 print('Guards rush out of nowhere and proceed to stab you to death'
                       '\n for your crimes against the kingdom.')
                 go_on = False
         elif entry == 'look':
-            entry = input('Look at what? ')
+            entry1 = input('Look at what? ')
 
-            if entry == 'items':
+            if entry1 == 'items':
                 print('You see many interesting items, \n'
                       'the gauntlet laying on the table nearby catches your eye.')
                 print('')
@@ -91,6 +152,8 @@ while play:
                       'the guards standing behind you. All of a sudden you see stars, \n'
                       'then nothing.')
                 go_on = False
+            else:
+                print('You don\'t see that.')
         elif entry == 'explore':
             print('You notice eyes staring at you out of many crevices and are glad\n'
                   'that you did not do anything foolish. You also notice a back door.')
@@ -106,8 +169,25 @@ while play:
             print('He slowly walks over to you and proceeds to slit your throat.\n'
                   'Congratulations! You died due to indifference. that\'s...not common')
             go_on = False
-        
+
     if go_on:
+        doors = 2
+
+        print('You are in a room with %s doors' %(doors))
+        print('')
+
+        while int(entry) != 1 and int(entry) != 2:
+            entry = input('Which one do you enter?(1-%s) ' %(doors))
+
+            door_chosen = int(entry)
+
+    if go_on and door_chosen == 1:
+
+        print('Considering the footprints you have left in the dust and the musty air, you surmise this room has not been used in quite a while.')
+
+
+
+    if go_on and door_chosen == 2:
         print('As you pass through the door, it shuts behind you.')
 
         if rpg_class == 'rogue':
