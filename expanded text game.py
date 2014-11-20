@@ -1,7 +1,22 @@
 # rpi hackathon fall 14 submission, Team Gofer Win
 #
 # edited by jnharton for readability and Python 3 compatibility?
+# expanded on by jnharton
 import random
+import time
+
+valid_actions = {
+    'rogue':    ['backstab', 'search', 'sneak', 'hide', 'pick'],
+    'sorcerer': ['cast', 'sense aura', 'reason'],
+    'warrior':  ['attack', 'block'],
+    'all':      ['explore']
+}
+
+default_stats = {
+    'rogue':    {'str': 8,  'dex': 13, 'vit': 9,  'int': 8,  'char': 12, 'wis': 10},
+    'sorcerer': {'str': 7,  'dex': 9,  'vit': 9,  'int': 15, 'char': 8,  'wis': 12},
+    'warrior':  {'str': 14, 'dex': 10, 'vit': 13, 'int': 6,  'char': 11, 'wis': 7},
+}
 
 play = True
 
@@ -9,21 +24,25 @@ while play:
     go_on = True
 
     print('\nWhat class would you like to be? We currently support:')
-    print('Rogue    (Stats:  8 Int,  8 Str, 12 Char, 10 Wis, 13 Dex,  9 Vit)\n'
-          'Sorcerer (Stats: 15 Int,  7 Str,  8 Char, 12 Wis,  9 Dex,  9 Vit)\n'
-          'Warrior  (Stats:  6 Int, 14 Str, 11 Char,  7 Wis, 10 Dex, 13 Vit)')
+    print('Sorcerer (Stats: 15 Int,  7 Str,  8 Char, 12 Wis,  9 Dex,  9 Vit) \n'
+          'Warrior  (Stats:  6 Int, 14 Str, 11 Char,  7 Wis, 10 Dex, 13 Vit) \n'
+          'Rogue    (Stats:  8 Int,  8 Str, 12 Char, 10 Wis, 13 Dex,  9 Vit)')
     print("")
 
     inventory = []
     rpg_class = input('Please input your choice: ').lower()
 
+    # set stats
+    #stats = default_stats[rpg_class]
+    stats = default_stats.get(rpg_class)
+
     # sets starting gear
-    if rpg_class == 'rogue':
-        inventory = ['dagger', 'dagger', 'cloak', '', 50]
-    elif rpg_class == 'sorcerer':
+    if rpg_class == 'sorcerer':
         inventory = ['staff', 'book', 'robes', 'ingredients bag', 20]
     elif rpg_class == 'warrior':
         inventory = ['sword', 'shield', 'armor', 'flask', 25]
+    elif rpg_class == 'rogue':
+        inventory = ['dagger', 'dagger', 'cloak', '', 50]
     else:
         print('You are an npc in this world and die immediately because of bears...'
               'and I don\'t mean they attack and kill you...simply their existence'
@@ -57,6 +76,20 @@ while play:
             else:
                 print('Guards rush out of nowhere and proceed to stab you to death'
                       '\n for your crimes against the kingdom.')
+                go_on = False
+        elif entry == 'look':
+            entry = input('Look at what? ')
+
+            if entry == 'items':
+                print('You see many interesting items, \n'
+                      'the gauntlet laying on the table nearby catches your eye.')
+                print('')
+
+                time.sleep(3)
+
+                print('Caught up in examining the gauntlet, you are oblivious to\n'
+                      'the guards standing behind you. All of a sudden you see stars, \n'
+                      'then nothing.')
                 go_on = False
         elif entry == 'explore':
             print('You notice eyes staring at you out of many crevices and are glad\n'
