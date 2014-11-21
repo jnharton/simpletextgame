@@ -34,10 +34,10 @@ while play:
     if go_on:
         doors = random.randint(1, 4)
 
-        print('You are in a room with %s doors' %(doors))
+        print('You are in a room with %s doors' % doors)
         print('')
 
-        entry = input('Which one do you enter?(1-%s) ' %(doors))
+        entry = input('Which one do you enter?(1-%s) ' % doors)
 
         print('You are now in a large, but empty audience hall.\n'
               'There are many items lying around.')
