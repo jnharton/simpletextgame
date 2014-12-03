@@ -43,6 +43,8 @@ while play:
     guards_alerted = False
     have_light = False
 
+    executed_by_guards = False
+    killed_by_dragon = False
     found_trapdoor = False
     befriend_dragon = False
 
@@ -55,30 +57,42 @@ while play:
     inventory = []
     rpg_class = input('Please input your choice: ').lower()
 
+    print('')
+
     if rpg_class not in classes:
-        print('You are an npc in this world and die immediately because of bears...'
-              'and I don\'t mean they attack and kill you...simply their existence'
+        print('You are an npc in this world and die immediately because of bears... '
+              'and I don\'t mean they attack and kill you... the simple fact of their existence '
               'causes you to die of fear')
         go_on = False
 
-    # set stats
-    stats = default_stats[rpg_class]
+    # player data initialization - based on class choice
+    if go_on:
+        # set stats
+        stats = default_stats[rpg_class]
 
-    # 'randomize' stats around default values
-    stats['str'] = random.randint(stats['str'] - 2, stats['str'] + 2)
-    stats['dex'] = random.randint(stats['dex'] - 2, stats['dex'] + 2)
-    stats['vit'] = random.randint(stats['vit'] - 2, stats['vit'] + 2)
-    stats['int'] = random.randint(stats['int'] - 2, stats['int'] + 2)
-    stats['cha'] = random.randint(stats['cha'] - 2, stats['cha'] + 2)
-    stats['wis'] = random.randint(stats['wis'] - 2, stats['wis'] + 2)
+        # 'randomize' stats around default values
+        stats['str'] = random.randint(stats['str'] - 2, stats['str'] + 2)
+        stats['dex'] = random.randint(stats['dex'] - 2, stats['dex'] + 2)
+        stats['vit'] = random.randint(stats['vit'] - 2, stats['vit'] + 2)
+        stats['int'] = random.randint(stats['int'] - 2, stats['int'] + 2)
+        stats['cha'] = random.randint(stats['cha'] - 2, stats['cha'] + 2)
+        stats['wis'] = random.randint(stats['wis'] - 2, stats['wis'] + 2)
 
-    # sets starting gear
-    if rpg_class == 'sorcerer':
-        inventory = ['staff', 'book', 'robes', 'ingredients bag', 20]
-    elif rpg_class == 'warrior':
-        inventory = ['sword', 'shield', 'armor', 'flask', 25]
-    elif rpg_class == 'rogue':
-        inventory = ['dagger', 'dagger', 'cloak', 'unlit torch', 'flint and steel', 50]
+        # sets starting gear
+        if rpg_class == 'sorcerer':
+            inventory = ['staff', 'book', 'robes', 'ingredients bag', 20]
+        elif rpg_class == 'warrior':
+            inventory = ['sword', 'shield', 'armor', 'flask', 25]
+        elif rpg_class == 'rogue':
+            inventory = ['dagger', 'dagger', 'cloak', 'unlit torch', 'flint and steel', 50]
+
+        # tell the player what's in their inventory
+        print('You have:')
+
+        for item in inventory:
+            print(item)
+
+        print('')
 
     # begin your adventure
     if go_on:
@@ -87,8 +101,18 @@ while play:
         print('You are in a room with %s doors' % doors)
         print('')
 
-        entry = input('Which one do you enter?(1-%s) ' % doors)
+        while door_chosen not in range(1, doors + 1):
+            entry = input('Which one do you enter?(1-%s) ' % doors)
 
+            try:
+                door_chosen = int(entry)
+            except TypeError:
+                print('TypeError: Not an Integer.')
+                door_chosen = 0
+                continue
+
+    # audience hall
+    if go_on:
         print('You are now in a large, but empty audience hall.\n'
               'There are many items lying around.')
         print('')
@@ -97,6 +121,9 @@ while play:
             print('There is a fairly valuable looking gauntlet on the front table, \n'
                   'it might fetch quite a nice price on the market.')
             print('')
+        else:
+            # TODO find a way to make this work without breaking the game
+            guards_alerted = True
         
         entry = input('What do you do? ')
 
@@ -154,11 +181,14 @@ while play:
                     print('Guards rush out of nowhere to surround you, \n'
                           'then they summarily execute you (by beheading of course), \n'
                           'but not before they chop off each of your hands and feet')
+                    executed_by_guards = True
                     go_on = False
             else:
                 # implied that anyone but a rogue would be a very noisy thief
+                # (if you aren't a rogue the guards we're already alert)
                 print('Guards rush out of nowhere and proceed to stab you to death'
                       '\n for your crimes against the kingdom.')
+                executed_by_guards = True
                 go_on = False
         elif entry == 'look':
             # TODO expand with loop to give you a chance to look at the gauntlet too
@@ -182,6 +212,7 @@ while play:
                 print('Caught up in examining the gauntlet, you are oblivious to\n'
                       'the guards standing behind you. All of a sudden you see stars, \n'
                       'then nothing.')
+                executed_by_guards = True
                 go_on = False
             else:
                 print('You don\'t see that.')
@@ -197,6 +228,7 @@ while play:
 
             if entry == 'stay':
                 'The eyes form into soldiers who come out and murder you.'
+                executed_by_guards = True
                 go_on = False
             elif entry == 'run':
                 # TODO fix kludge in that the step I added takes the excitement out of running away
@@ -232,6 +264,7 @@ while play:
             print('You return to the room you left, not the wisest choice all things considered...')
             print('')
             print('The eyes, from before, form into soldiers who come out and murder you.')
+            executed_by_guards = True
             go_on = False
 
     skip = False
@@ -382,7 +415,26 @@ while play:
 
     # TODO fix this to have a more appropriate end message if the guards caught you stealing and executed you
     # print end game message
-    if found_trapdoor is True:
+    if executed_by_guards is True:
+        if rpg_class == 'rogue':
+            print('rogue lose message')
+        elif rpg_class == 'sorcerer':
+            print('sorcerer lose message')
+        elif rpg_class == 'warrior':
+            print('warrior lose message')
+
+        print('')
+        print('You Lost')
+    elif killed_by_dragon is True:
+        if rpg_class == 'rogue':
+            print('Death by being eaten by a dragon, an ignoble end if there ever was one \n'
+                  'and well deserved for your thieving ways!')
+        elif rpg_class == 'warrior':
+            print('warrior lose message')
+
+        print('')
+        print('You Lost')
+    elif found_trapdoor is True:
         if rpg_class == 'rogue':
             print('You found a way out and escaped with your stolen loot.')
         elif rpg_class == 'sorcerer':
@@ -397,14 +449,6 @@ while play:
             print('sorcerer win message')
 
         print('You Won!')
-    else:
-        if rpg_class == 'rogue':
-            print('Death by being eaten by a dragon, an ignoble end if there ever was one \n'
-                  'and well deserved for your thieving ways!')
-        elif rpg_class == 'warrior':
-            print('warrior lose message')
-
-        print('You Lost!')
 
     print('')
 
@@ -412,10 +456,11 @@ while play:
     # calculate and print a score
     score = 0
 
-    treasure = ['golden chalice', 'ruby studded crown', 'gleaming shield', 'gilt handled dagger']
+    if rpg_class == 'rogue' and found_trapdoor:
+        treasure = ['golden chalice', 'ruby studded crown', 'gleaming shield', 'gilt handled dagger']
 
-    if rpg_class == 'rogue':
         if gauntlet_taken:
+            print('gauntlet: 5')
             score += 5
 
         for item in inventory:
